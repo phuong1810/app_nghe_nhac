@@ -1,0 +1,23 @@
+header{
+    text-align: center;
+    color: #fff;
+   
+    .MuiContainer-root{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    nav{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 165px;
+
+        a{
+            display: flex;
+            align-items: center;
+            
+        }
+    }
+}

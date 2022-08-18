@@ -1,0 +1,7 @@
+.todo-item{
+    &.active{
+        text-decoration: line-through;
+        color: #333;
+    }
+    cursor: pointer;
+}

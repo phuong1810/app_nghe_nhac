@@ -1,0 +1,21 @@
+.col-12{
+    width: 25%;
+    padding: 0 15px;
+}
+.item-album{    
+    margin-bottom: 30px;  
+    .img-hv{
+        position: relative;
+        padding-bottom: 100%;
+        overflow: hidden;
+        border-radius: 5px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    }
+    img{
+        max-width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        object-fit: contain;
+    }
+}
