@@ -71,7 +71,7 @@ export default function AddAlbum() {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <h1>Add New Category</h1>
+                    <h1>Edit New Category</h1>
                     <Button color="primary" variant="contained" type="submit"><SaveIcon/> Save</Button>
                 </Grid>
                 <Grid container spacing={2}>

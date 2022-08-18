@@ -1,63 +1,74 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { DataGrid } from '@material-ui/data-grid';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, gql, useMutation} from '@apollo/client';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Grid from '@material-ui/core/Grid';
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 import { useNavigate } from 'react-router-dom';
 
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const Gql_GetCategory = gql`
+    query getCategories {
+        getCategories {
+            id
+            name
+        }
+    }
+`; 
 
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
+const Gql_DeleteCategory = gql`
+  mutation DeleteCategory($categoryId: ID!) {
+    deleteCategory(categoryId: $categoryId) {
+      categoryId
+    }
+  }
 
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
+`;
+function getDataCategory(data){
+    let rows = [];
+    if(data.getCategories.length > 0){
+        rows = data.getCategories;
+    }
+    return rows;
+}
 
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
 
-const columns = [
+export default function ListCategory() {
+  const [deleteCategory] = useMutation(Gql_DeleteCategory, {
+    onCompleted: (data) => {
+      alert('Successfully deleted');
+    },
+    onError: (errorDel) => {
+      alert(`Terdapat error saat delete!!!\n${errorDel}`);
+    }
+  });
+  
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
+  
+  const OnDelete = (id) => {
+    deleteCategory(id);
+    console.log(id)
+  };
+
+  const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
       field: 'name',
@@ -72,9 +83,12 @@ const columns = [
         sortable: false,
         renderCell: (params) => {
           const OnEdit = (e) => {
-            e.stopPropagation(); // don't select this row after clicking
-          }
+            // e.stopPropagation(); // don't select this row after clicking
+            let navigate = useNavigate();
+            navigate('/admin/category/edit/1')
            
+          }
+        
           return <Button onClick={OnEdit} color="primary" variant="contained" ><EditIcon/></Button>;
         }
     },
@@ -83,62 +97,32 @@ const columns = [
         headerName: "Delete",
         sortable: false,
         renderCell: (params) => {
-          const OnDelete = () =>{
-            const [open, setOpen] = React.useState(false);
+          const handleClickOpen = () => {
             setOpen(true);
-            
-          }
-          return <Button onClick={OnDelete} color="primary" variant="contained" ><DeleteIcon/></Button>;
+            // console.log(params.id)
+            OnDelete(params.id);   
+          };       
+          return <Button onClick={handleClickOpen} color="primary" variant="contained" ><DeleteIcon/></Button>;
         }
     },
-];
-const Gql_GetCategory = gql`
-    query getCategories {
-        getCategories {
-            id
-            name
-        }
-    }
-`; 
-
-const Gql_DeleteCategory = gql`
-  mutation DeleteCategory($categoryId: String!) {
-    deleteCategory(
-      categoryId: $categoryId
-    )
-  }
-`;
-function getDataCategory(data){
-    let rows = [];
-    if(data.getCategories.length > 0){
-        rows = data.getCategories;
-    }
-    return rows;
-}
-export default function ListCategory() {
-
-    const [open, setOpen] = React.useState(false);
-
-    const handleClose = () => {
-      setOpen(false);
-    };
-
-    const { loading, error, data } = useQuery(Gql_GetCategory);
+  ];
+    
+    const { data, loading, error } = useQuery(Gql_GetCategory);
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
     var rows = getDataCategory(data);
 
     return (
-        <div style={{ height: 700, width: '100%' }}>
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
+      <div style={{ height: 700, width: '100%' }}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
         >
-            <h1>List Category</h1>
-            <Button color="primary" variant="contained" href="/admin/category/add"><AddIcon/> Add New</Button>
+          <h1>List Category</h1>
+          <Button color="primary" variant="contained" href="/admin/category/add"><AddIcon/> Add New</Button>
         </Grid>
         <DataGrid
             rows={rows}
@@ -147,32 +131,29 @@ export default function ListCategory() {
             checkboxSelection
             disableSelectionOnClick
         />
-         <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-          <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            Modal title
-          </DialogTitle>
-          <DialogContent dividers>
-            <Typography gutterBottom>
-              Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-              in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-            </Typography>
-            <Typography gutterBottom>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-              lacus vel augue laoreet rutrum faucibus dolor auctor.
-            </Typography>
-            <Typography gutterBottom>
-              Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-              scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-              auctor fringilla.
-            </Typography>
+        <Dialog
+          open={open}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">{"Are you sure delete this?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">                
+                Please select the corresponding option
+            </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose} color="primary">
-              Save changes
+            <Button onClick={handleClose} color="primary">
+              Disagree
+            </Button>
+            <Button onClick={OnDelete} color="primary">
+                Agree
             </Button>
           </DialogActions>
         </Dialog>
-        
-        </div>
+      </div>
     )
 }

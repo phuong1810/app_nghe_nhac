@@ -12,6 +12,7 @@ import RegisterFeature from './components/Administrator/Register';
 import LoginFeature from './components/Administrator/Login';
 import CategoryFeature from './components/Administrator/Category';
 import CategoryAdd from './components/Administrator/Category/Add';
+import CategoryEdit from './components/Administrator/Category/Edit';
 import Member from './components/Administrator/Member';
 import Album from './components/Administrator/Album';
 import AlbumAdd from './components/Administrator/Album/Add';
@@ -39,6 +40,7 @@ function App() {
         <Route path="/admin/login" element={<LoginFeature />} />
         <Route path="/admin/category" element={<CategoryFeature />} />
         <Route path="/admin/category/add" element={<CategoryAdd />} />
+        <Route path="/admin/category/edit/:id" element={<CategoryEdit />} />
         <Route path="/admin/member" element={<Member />} />
         {/* <Route path="/album" element={<AlbumFeature />} /> */}
         <Route path="url-params" element={<UrlParams />} />
