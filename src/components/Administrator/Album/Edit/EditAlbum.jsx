@@ -146,8 +146,18 @@ export default function AddAlbum() {
                                 autoFocus
                             />
                         </Grid>
-                        
-                        
+                        <FormControl xs={12} variant="filled" className={classes.formControl}>
+                            <InputLabel htmlFor="filled-age-native-simple">{values?.status ?? data?.getMusicById.status} </InputLabel>
+                            <Select
+                                name ="status"
+                                onChange={ onChange }
+                                >
+                                <option value={values?.status ?? data?.getMusicById.status} />
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Rejected or invalid">Rejected or invalid</option>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                     <FormControl xs={12} variant="filled" className={classes.formControl}>
@@ -156,7 +166,7 @@ export default function AddAlbum() {
                             name ="category"
                             onChange={ onChange }
                             >
-                            <option aria-label="None" value={values?.category ?? data?.getMusicById.category} />
+                            <option value={values?.category ?? data?.getMusicById.category} />
                             {categoryList.map(category => (
                                 <option key={category.id}  value={category.name}>{category.name}</option>
                             ))}

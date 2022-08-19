@@ -47,8 +47,9 @@ export default function ListCategory() {
 
   const navigate = useNavigate();
   const [deleteCategory] = useMutation(Gql_DeleteCategory, {
-    onCompleted: (data) => {
+    onCompleted: (data) => {      
       alert('Successfully deleted');
+      refetch()
     },
     onError: (errorDel) => {
       alert(`Terdapat error saat delete!!!\n${errorDel}`);
@@ -64,7 +65,7 @@ export default function ListCategory() {
     if(deleteId) {
       deleteCategory({ variables: { categoryId: deleteId } });
       setDeleteId(null);
-      refetch();
+      // refetch();
     }
     // console.log(id)
   };
@@ -108,7 +109,9 @@ export default function ListCategory() {
     },
   ];
     
-    const { data, loading, error, refetch } = useQuery(Gql_GetCategory,{fetchPolicy: "no-cache" });
+    const { data, loading, error, refetch } = useQuery(Gql_GetCategory,{
+      fetchPolicy: "no-cache" 
+    });
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 

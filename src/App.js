@@ -44,7 +44,6 @@ function App() {
         <Route path="/admin/category/add" element={<CategoryAdd />} />
         <Route path="/admin/category/edit/:id" element={<CategoryEdit />} />
         <Route path="/admin/member" element={<Member />} />
-        {/* <Route path="/album" element={<AlbumFeature />} /> */}
         <Route path="url-params" element={<UrlParams />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/counter" element={<CounterFeature/>}/>
