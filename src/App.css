@@ -2,3 +2,8 @@
   min-height: 100vh;
   position: relative;
 }
+.img-responsive{
+  height: 100px;
+  object-fit: cover;
+  margin: 0 auto;
+}

@@ -4,10 +4,10 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
-import { useMutation, gql } from '@apollo/client';
+import { useQuery, gql, useMutation} from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../../../util/hooks';
-
+import { useParams } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -34,33 +34,41 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
     },
   }));
-export default function AddAlbum() {
-
-    const classes = useStyles();
-
-    const [errors, setErrors] = useState({});  
-
-    const { onChange, onSubmit, values } = useForm(createCategory, {
-        name: '',
-    });
-
-
-    let navigate = useNavigate();
-
-    const [addCategory, { loading }] =  useMutation(Gql_CreateCategory, {
-        update: (_, __) => navigate('/admin/category'),
-        onError(err) {
-            console.log(err.graphQLErrors.length);
-            if (err.graphQLErrors.length > 0) {
-                setErrors(err.graphQLErrors[0].extensions.errors);
-            }
-        },
-        variables: values
-    });
-
-    function createCategory() {
-        addCategory();
+const Gql_UpdateCategory = gql`
+    mutation UpdateCategory($id: String!, $name: String!) {
+        updateCategory(id: $id, name: $name) {
+            id, name
+        }
     }
+`;
+const Gql_GetCategoryById = gql`
+   query GetCategoriesById($id: String) {
+    getCategoriesById(id: $id) {
+      id, name
+    }
+  }`; 
+    
+
+export default function EditCategory() {
+    
+    const classes = useStyles();
+    const { id } = useParams();
+    const navigate = useNavigate();
+    console.log(id);
+    const { data, error } = useQuery(Gql_GetCategoryById, { variables: { id: id } });
+
+    function editCategory() {
+        updateCategory();
+    }
+    const { onChange, onSubmit, values } = useForm(editCategory, {
+        id,
+        name: data?.getCategoriesById.name,
+    });
+
+    const [updateCategory, { loading }] =  useMutation(Gql_UpdateCategory, {
+        update: (_, __) => navigate('/admin/category'),
+        variables: {id : id , name : values.name },
+    });
 
     return (
         <div>          
@@ -87,25 +95,16 @@ export default function AddAlbum() {
                                 label="Category Name"
                                 autoFocus
                                 onChange={ onChange }
-                                value={values.name}
-                                error={errors.name ? true : false}
+                                value={values?.name ?? data?.getCategoriesById.name}
                             />
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-
+                    
                     </Grid>
                 </Grid>
             </form>
         </div>
     )
 }
-const Gql_CreateCategory = gql`
-    mutation CreateCategory(
-        $name: String!
-    ) {
-        createCategory(name: $name) {
-            id
-        }
-    }
-`;
+

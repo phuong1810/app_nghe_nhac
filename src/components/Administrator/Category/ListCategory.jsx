@@ -29,13 +29,11 @@ const Gql_GetCategory = gql`
 `; 
 
 const Gql_DeleteCategory = gql`
-  mutation DeleteCategory($categoryId: ID!) {
-    deleteCategory(categoryId: $categoryId) {
-      categoryId
-    }
+  mutation Mutation($categoryId: String!) {
+    deleteCategory(categoryId: $categoryId)
   }
-
 `;
+
 function getDataCategory(data){
     let rows = [];
     if(data.getCategories.length > 0){
@@ -46,6 +44,8 @@ function getDataCategory(data){
 
 
 export default function ListCategory() {
+
+  const navigate = useNavigate();
   const [deleteCategory] = useMutation(Gql_DeleteCategory, {
     onCompleted: (data) => {
       alert('Successfully deleted');
@@ -55,17 +55,18 @@ export default function ListCategory() {
     }
   });
   
-  const [open, setOpen] = useState(false);
-
+  const [deleteId, setDeleteId] = useState(null);
   const handleClose = () => {
-    setOpen(false);
+    setDeleteId(null);
   };
 
-
-  
-  const OnDelete = (id) => {
-    deleteCategory(id);
-    console.log(id)
+  const OnDelete = () => {
+    if(deleteId) {
+      deleteCategory({ variables: { categoryId: deleteId } });
+      setDeleteId(null);
+      refetch();
+    }
+    // console.log(id)
   };
 
   const columns = [
@@ -78,19 +79,20 @@ export default function ListCategory() {
     },
     
     {
-        field: "edit",
-        headerName: "Edit",
-        sortable: false,
-        renderCell: (params) => {
-          const OnEdit = (e) => {
-            // e.stopPropagation(); // don't select this row after clicking
-            let navigate = useNavigate();
-            navigate('/admin/category/edit/1')
-           
-          }
-        
-          return <Button onClick={OnEdit} color="primary" variant="contained" ><EditIcon/></Button>;
+      field: "edit",
+      headerName: "Edit",
+      sortable: false,
+      renderCell: (params) => {
+        const OnEdit = (e) => {
+          // e.stopPropagation(); // don't select this row after clicking
+          
+          navigate(`/admin/category/edit/${params.id}`)
+          // window.location.href(`/admin/category/edit/${params.id}`);
+          
         }
+      
+        return <Button onClick={OnEdit} color="primary" variant="contained" ><EditIcon/></Button>;
+      }
     },
     {
         field: "delete",
@@ -98,16 +100,15 @@ export default function ListCategory() {
         sortable: false,
         renderCell: (params) => {
           const handleClickOpen = () => {
-            setOpen(true);
-            // console.log(params.id)
-            OnDelete(params.id);   
+            setDeleteId(params.id);
+            // // console.log(params.id)
           };       
           return <Button onClick={handleClickOpen} color="primary" variant="contained" ><DeleteIcon/></Button>;
         }
     },
   ];
     
-    const { data, loading, error } = useQuery(Gql_GetCategory);
+    const { data, loading, error, refetch } = useQuery(Gql_GetCategory);
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
@@ -132,7 +133,7 @@ export default function ListCategory() {
             disableSelectionOnClick
         />
         <Dialog
-          open={open}
+          open={deleteId}
           TransitionComponent={Transition}
           keepMounted
           onClose={handleClose}

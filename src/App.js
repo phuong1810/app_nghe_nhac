@@ -1,9 +1,9 @@
 import './App.css';
 import React, { useEffect } from 'react';
 import AlbumFeature from './features/Album';
-import { Route, Routes, Link, NavLink } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Administrator from './components/Administrator';
-import Home from './features/Home';
+// import Home from './features/Home';
 import NotFound from './components/NotFound';
 import UrlParams from './features/UrlParams';
 import productApi from './api/productApi';
@@ -16,6 +16,7 @@ import CategoryEdit from './components/Administrator/Category/Edit';
 import Member from './components/Administrator/Member';
 import Album from './components/Administrator/Album';
 import AlbumAdd from './components/Administrator/Album/Add';
+import AlbumEdit from './components/Administrator/Album/Edit';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/admin" element={<Administrator/>} />
         <Route path="/admin/album" element={<Album/>} />
         <Route path="/admin/album/add" element={<AlbumAdd/>} />
+        <Route path="/admin/album/edit/:id" element={<AlbumEdit/>} />
         <Route path="/admin/register" element={<RegisterFeature/>} />
         <Route path="/admin/login" element={<LoginFeature />} />
         <Route path="/admin/category" element={<CategoryFeature />} />

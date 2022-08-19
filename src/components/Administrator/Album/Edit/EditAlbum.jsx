@@ -7,7 +7,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { useMutation, gql, useQuery } from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../../../util/hooks';
 
@@ -36,36 +36,13 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
     },
 }));
-const Gql_GetCategory = gql`
-    query getCategories {
-        getCategories {
-            id
-            name
-        }
-    }
-`; 
-
-function getDataCategory(data){
-    let rows = [];
-    if(data.getCategories.length > 0){
-        rows = data.getCategories;
-    }
-    return rows;
-}
 
 export default function AddAlbum() {
 
     const classes = useStyles();
-    const { dataGetCategory } = useQuery(Gql_GetCategory);
-    const rowsx = getDataCategory(dataGetCategory);
-    console.log(rowsx);
+
     const [errors, setErrors] = useState({});  
-    const initialState = {
-        name: '',
-        singer: '',
-        thumbnailUrl: '',
-        category: '',
-    };
+
     const { onChange, onSubmit, values } = useForm(createAlbum, {
         name: '',
         singer: '',
@@ -87,7 +64,6 @@ export default function AddAlbum() {
     });
 
     function createAlbum() {
-        console.log(values)
         addAlbum();
     }
 
@@ -100,8 +76,8 @@ export default function AddAlbum() {
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                >
-                    <h1>Add New Song</h1>
+                    >
+                    <h1>Edit Song</h1>
                     <Button type="submit" color="primary" variant="contained"><SaveIcon/> Save</Button>
                 </Grid>
                 <Grid container spacing={2}>
@@ -117,6 +93,8 @@ export default function AddAlbum() {
                                 label="Song Name"
                                 autoFocus
                                 onChange={ onChange }
+                                value={values.name}
+                                error={errors.name ? true : false}
                             />
                         </Grid>
                     
@@ -130,8 +108,6 @@ export default function AddAlbum() {
                                 id="singer"
                                 label="Singer Name"
                                 autoFocus
-                                onChange={ onChange }
-
                             />
                         </Grid>
                         
@@ -144,7 +120,6 @@ export default function AddAlbum() {
                                 fullWidth
                                 id="urlthumbnail"
                                 label="Url Thumbnail"
-                                onChange={ onChange }
                                 autoFocus
                             />
                         </Grid>
@@ -161,7 +136,6 @@ export default function AddAlbum() {
                             id: 'filled-age-native-simple',
                         }}
                         name ="category"
-                        onChange={ onChange }
                         >
                         <option aria-label="None" value="" />
                         <option value={10}>Ten</option>
@@ -175,7 +149,6 @@ export default function AddAlbum() {
         </div>
     )
 }
-
 
 const Gql_CreateMusic = gql`
     mutation createMusic(
