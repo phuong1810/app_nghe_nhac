@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
     },
 }));
+
 const Gql_GetCategory = gql`
     query getCategories {
         getCategories {
@@ -45,27 +46,43 @@ const Gql_GetCategory = gql`
     }
 `; 
 
-function getDataCategory(data){
-    let rows = [];
-    if(data.getCategories.length > 0){
-        rows = data.getCategories;
+const Gql_CreateMusic = gql`
+    mutation createMusic(
+        $name: String!
+        $singer: String
+        $thumbnailUrl: String
+        $status: String
+        $category: String
+    ) {
+        createMusic(
+            musicInput: {
+                name: $name
+                singer: $singer
+                thumbnailUrl: $thumbnailUrl
+                status: $status
+                category: $category
+            }
+        ) {
+            id name singer thumbnailUrl status category
+        }
     }
-    return rows;
-}
+`;
+
 
 export default function AddAlbum() {
 
     const classes = useStyles();
-    const { dataGetCategory } = useQuery(Gql_GetCategory);
-    const rowsx = getDataCategory(dataGetCategory);
-    console.log(rowsx);
+    
     const [errors, setErrors] = useState({});  
+
     const initialState = {
         name: '',
         singer: '',
         thumbnailUrl: '',
         category: '',
     };
+
+
     const { onChange, onSubmit, values } = useForm(createAlbum, {
         name: '',
         singer: '',
@@ -91,8 +108,18 @@ export default function AddAlbum() {
         addAlbum();
     }
 
-    return (
+    function parserData(data) {
+        let rows = [];
+        if (data) {
+            rows = data.getCategories;
+        }
+        return rows;
+    }
+    const { data } = useQuery(Gql_GetCategory);
 
+    const categoryList = parserData(data);
+
+    return (
         <div>           
             <form onSubmit={ onSubmit } className={classes.form} noValidate>
                 <Grid
@@ -138,11 +165,11 @@ export default function AddAlbum() {
                         <Grid className={classes.inputMargin} item xs={12}>
                             <TextField
                                 autoComplete="urlthumbnail"
-                                name="urlthumbnail"
+                                name="thumbnailUrl"
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="urlthumbnail"
+                                id="thumbnailUrl"
                                 label="Url Thumbnail"
                                 onChange={ onChange }
                                 autoFocus
@@ -153,20 +180,13 @@ export default function AddAlbum() {
                     <FormControl xs={12} variant="filled" className={classes.formControl}>
                         <InputLabel htmlFor="filled-age-native-simple">Category</InputLabel>
                         <Select
-                        // native
-                        // value={state.category}
-                        // // onChange={handleChange}
-                        inputProps={{
-                            name: 'category',
-                            id: 'filled-age-native-simple',
-                        }}
-                        name ="category"
-                        onChange={ onChange }
-                        >
-                        <option aria-label="None" value="" />
-                        <option value={10}>Ten</option>
-                        <option value={20}>Twenty</option>
-                        <option value={30}>Thirty</option>
+                            name ="category"
+                            onChange={ onChange }
+                            >
+                            <option aria-label="None" value="" />
+                            {categoryList.map(category => (
+                                <option key={category.id}  value={category.name}>{category.name}</option>
+                            ))}
                         </Select>
                     </FormControl>
                     </Grid>                    
@@ -176,25 +196,3 @@ export default function AddAlbum() {
     )
 }
 
-
-const Gql_CreateMusic = gql`
-    mutation createMusic(
-        $name: String!
-        $singer: String
-        $thumbnailUrl: String
-        $status: String
-        $category: String
-    ) {
-        createMusic(
-            musicInput: {
-                name: $name
-                singer: $singer
-                thumbnailUrl: $thumbnailUrl
-                status: $status
-                category: $category
-            }
-        ) {
-            id name singer thumbnailUrl status category
-        }
-    }
-`;

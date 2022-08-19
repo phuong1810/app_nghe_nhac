@@ -27,6 +27,7 @@ const Gql_GetMusic = gql`
             name
             thumbnailUrl
             singer
+            category
         }
     }
 `;
@@ -40,7 +41,7 @@ const Gql_DeleteMusic = gql`
   }
 `;
 
-function getDateMusic(data){
+function getDataMusic(data){
     let rows = [];
     if(data.getMusics.length > 0){
         rows = data.getMusics;
@@ -70,7 +71,7 @@ export default function ListAlbum() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  var rows = getDateMusic(data);
+  var rows = getDataMusic(data);
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -91,10 +92,6 @@ export default function ListAlbum() {
       headerName: 'Category',
       width: 150,
       editable: true,
-      valueGetter: (params) =>
-      `${params.getValue(params.id, 'name') || ''} ${
-        params.getValue(params.id, 'singer') || ''
-      }`,
     },
     {
       width: 200,
@@ -103,23 +100,22 @@ export default function ListAlbum() {
       sortable: false,
       renderCell: (params) => {
         return (
-          <>
-            <img className="img-responsive" alt="Remy Sharp" src="https://photo-resize-zmp3.zmdcdn.me/w480_r2x3_webp/cover_artist/3/5/a/d/35ad281a468d21a2d0ad5a8d96c62f23.jpg" />
-          </>
+          console.log(params.value.thumbnailUrl)
+          
         );
       }
     },
     {
-        field: "edit",
-        headerName: "Edit",
-        sortable: false,
-        renderCell: (params) => {
-          const OnEdit = (e) => {
-            navigate(`/admin/album/edit/${params.id}`)            
-          }
-           
-          return <Button onClick={OnEdit} color="primary" variant="contained" ><EditIcon/></Button>;
+      field: "edit",
+      headerName: "Edit",
+      sortable: false,
+      renderCell: (params) => {
+        const OnEdit = (e) => {
+          navigate(`/admin/album/edit/${params.id}`)            
         }
+          
+        return <Button onClick={OnEdit} color="primary" variant="contained" ><EditIcon/></Button>;
+      }
     },
     {
       field: "delete",

@@ -108,7 +108,7 @@ export default function ListCategory() {
     },
   ];
     
-    const { data, loading, error, refetch } = useQuery(Gql_GetCategory);
+    const { data, loading, error, refetch } = useQuery(Gql_GetCategory,{fetchPolicy: "no-cache" });
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 

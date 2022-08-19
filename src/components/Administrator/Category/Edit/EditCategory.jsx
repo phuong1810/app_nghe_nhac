@@ -1,13 +1,12 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 import { useQuery, gql, useMutation} from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../../../util/hooks';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -46,7 +45,7 @@ const Gql_GetCategoryById = gql`
     getCategoriesById(id: $id) {
       id, name
     }
-  }`; 
+}`; 
     
 
 export default function EditCategory() {
