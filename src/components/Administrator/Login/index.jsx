@@ -34,7 +34,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+const Gql_Login = gql`
+  mutation login(
+    $username: String!
+    $password: String!
+  ) {
+    login(
+      username: $username
+      password: $password
+    ) {
+      id
+      email
+      username
+      createdAt
+      token
+    }
+  }
+`;
+
 export default function LoginFeature() {
+  
   const classes = useStyles();
 
   const [errors, setErrors] = React.useState({});
@@ -46,12 +66,13 @@ export default function LoginFeature() {
   
   const navigate = useNavigate();
   
-  const [loginUser, {loading}] = useMutation(LOGIN_USER, {
+  const [loginUser] = useMutation(Gql_Login, {
     update(_, result){
-      navigate("/", { state: { message: "Ok" } }); 
+      console.log(result);
+      localStorage.setItem("jwtToken", result.data.login.token);
+      navigate("/admin", { state: { message: "Login success" } }); 
     },
     onError(err){
-      // setErrors(err.graphQLErrors[0].extensions.exception.errors);
       console.log(err.graphQLErrors.length);
       if (err.graphQLErrors.length > 0) {
           setErrors(err.graphQLErrors[0].extensions.errors);
@@ -142,21 +163,3 @@ export default function LoginFeature() {
     </Container>
   );
 }
-
-const LOGIN_USER = gql`
-  mutation login(
-    $username: String!
-    $password: String!
-  ) {
-    login(
-      username: $username
-      password: $password
-    ) {
-      id
-      email
-      username
-      createdAt
-      token
-    }
-  }
-`;

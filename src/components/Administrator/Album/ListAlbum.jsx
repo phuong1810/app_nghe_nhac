@@ -100,8 +100,9 @@ export default function ListAlbum() {
       sortable: false,
       renderCell: (params) => {
         return (
-          console.log(params.value.thumbnailUrl)
+          // console.log(params.value.thumbnailUrl)
           
+            <img src={params.value.thumbnailUrl}/>
         );
       }
     },

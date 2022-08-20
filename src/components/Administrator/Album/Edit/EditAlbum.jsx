@@ -144,6 +144,7 @@ export default function AddAlbum() {
                                 id="singer"
                                 value={values?.singer ?? data?.getMusicById.singer}
                                 autoFocus
+                                onChange={ onChange }
                             />
                         </Grid>
                         <FormControl xs={12} variant="filled" className={classes.formControl}>
