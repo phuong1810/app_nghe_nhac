@@ -5,7 +5,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import Administrator from "./components/Administrator";
 // import Home from './features/Home';
 import NotFound from "./components/NotFound";
-import UrlParams from "./features/UrlParams";
+// import UrlParams from "./features/UrlParams";
 import CounterFeature from "./features/Counter";
 import RegisterFeature from "./components/Administrator/Register";
 import LoginFeature from "./components/Administrator/Login";
@@ -32,10 +32,36 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<AlbumFeature />} />
-        <Route path="/admin" element={<Administrator />} />
-        <Route path="/admin/album" element={<Album />} />
-        <Route path="/admin/album/add" element={<AlbumAdd />} />
-        <Route path="/admin/album/edit/:id" element={<AlbumEdit />} />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute
+              redirectTo={"/admin/login"}
+              children={<Administrator />}
+            />
+          }
+        />
+        <Route
+          path="/admin/album"
+          element={
+            <PrivateRoute redirectTo={"/admin/login"} children={<Album />} />
+          }
+        />
+        <Route
+          path="/admin/album/add"
+          element={
+            <PrivateRoute redirectTo={"/admin/login"} children={<AlbumAdd />} />
+          }
+        />
+        <Route
+          path="/admin/album/edit/:id"
+          element={
+            <PrivateRoute
+              redirectTo={"/admin/login"}
+              children={<AlbumEdit />}
+            />
+          }
+        />
         <Route path="/admin/register" element={<RegisterFeature />} />
         <Route path="/admin/login" element={<LoginFeature />} />
         <Route
@@ -47,10 +73,31 @@ function App() {
             />
           }
         />
-        <Route path="/admin/category/add" element={<CategoryAdd />} />
-        <Route path="/admin/category/edit/:id" element={<CategoryEdit />} />
-        <Route path="/admin/member" element={<Member />} />
-        <Route path="url-params" element={<UrlParams />} />
+        <Route
+          path="/admin/category/add"
+          element={
+            <PrivateRoute
+              redirectTo={"/admin/login"}
+              children={<CategoryAdd />}
+            />
+          }
+        />
+        <Route
+          path="/admin/category/edit/:id"
+          element={
+            <PrivateRoute
+              redirectTo={"/admin/login"}
+              children={<CategoryEdit />}
+            />
+          }
+        />
+        <Route
+          path="/admin/member"
+          element={
+            <PrivateRoute redirectTo={"/admin/login"} children={<Member />} />
+          }
+        />
+        {/* <Route path="url-params" element={<UrlParams />} /> */}
         <Route path="*" element={<NotFound />} />
         <Route path="/counter" element={<CounterFeature />} />
       </Routes>

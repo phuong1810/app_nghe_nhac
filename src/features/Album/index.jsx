@@ -3,9 +3,9 @@ import { useQuery, gql } from '@apollo/client';
 import AlbumList from './components/AlbumList';
 
 
-const pullQuery = gql`
-    query getMusics {
-        getMusics {
+const Gql_GetMusic = gql`
+    query getMusicsFE {
+        getMusicsFE {
             id
             name
             thumbnailUrl
@@ -14,14 +14,14 @@ const pullQuery = gql`
 `;
 
 function AlbumFeature(props) {
-    const { loading, error, data } = useQuery(pullQuery);
+    const { loading, error, data } = useQuery(Gql_GetMusic);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
-    return(
+    return (
         <div>
-            <AlbumList albumList={data.getMusics} />
+            <AlbumList albumList={data.getMusicsFE} />
         </div>
     );
 }

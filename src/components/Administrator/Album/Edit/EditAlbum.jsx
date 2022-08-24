@@ -183,9 +183,11 @@ export default function AddAlbum() {
                                 id="thumbnailUrl"
                                 autoFocus
                                 value={values?.thumbnailUrl ?? data?.getMusicById.thumbnailUrl}
+                                onChange={ onChange }
                             />
                         </Grid>
-                        <img className='img-responsive--v2' style={{maxHeight:'250px'}} src={values?.thumbnailUrl ?? data?.getMusicById.thumbnailUrl}/>
+                        
+                        <img alt="images" className='img-responsive--v2' style={{maxHeight:'250px'}} src={values?.thumbnailUrl ?? data?.getMusicById.thumbnailUrl}/>
                     </FormControl>
                     </Grid>                    
                 </Grid>

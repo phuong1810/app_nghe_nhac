@@ -10,6 +10,8 @@ import Select from '@material-ui/core/Select';
 import { useMutation, gql, useQuery } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../../../util/hooks';
+// import { Upload } from "./UploadImage/Upload";
+// import { Files } from "./UploadImage/Files";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -70,11 +72,50 @@ const Gql_CreateMusic = gql`
 
 
 export default function AddAlbum() {
-
+    
     const classes = useStyles();
     
-    const [errors, setErrors] = useState({});  
+    const [errors, setErrors] = useState({}); 
+    //imgur
+    
+    const onFileChange = async (event) => {
+        
+        console.log("event",event);
 
+         // Client ID
+        const clientId = "3950dc3bf81e709",
+        auth = "Client-ID " + clientId;
+        
+        const formData = new FormData();
+
+        formData.append("image",  event.target.files[0]);
+        try {
+            let rep = await fetch("https://api.imgur.com/3/image/", {
+                method: "POST", // HTTP Method
+                body: formData, // Data to be sent
+                contentType: "application/json",
+                headers: {
+                // Setting header
+                    Authorization: auth,
+                    Accept: "application/json",
+                },
+            });
+            let datarep  = null;
+            if(rep) {
+                datarep = await rep.json();
+            }
+            if(datarep) {
+                console.log(datarep.data);
+                setDataForms({...values, thumbnailUrl : datarep.data.link});
+            }
+        }
+        catch (errors) {
+            console.log(errors);
+        }
+       
+            
+    };
+    //end
     const initialState = {
         name: '',
         singer: '',
@@ -83,7 +124,7 @@ export default function AddAlbum() {
     };
 
 
-    const { onChange, onSubmit, values } = useForm(createAlbum, {
+    const { onChange, onSubmit, values, setValues : setDataForms } = useForm(createAlbum, {
         name: '',
         singer: '',
         thumbnailUrl: '',
@@ -173,6 +214,7 @@ export default function AddAlbum() {
                                 label="Url Thumbnail"
                                 onChange={ onChange }
                                 autoFocus
+                                value={values.thumbnailUrl}
                             />
                         </Grid>
                     </Grid>
@@ -188,6 +230,9 @@ export default function AddAlbum() {
                                 <option key={category.id}  value={category.name}>{category.name}</option>
                             ))}
                         </Select>
+                        <input type="file" onChange={onFileChange} />
+                        {/* <Upload/>
+                        <Files/> */}
                     </FormControl>
                     </Grid>                    
                 </Grid>
